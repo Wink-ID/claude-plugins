@@ -270,10 +270,7 @@ return <p>Signed in as {me.email ?? me.winkTag}</p>;
 In route handlers and server actions call `getSession()` and return 401 / throw if null.
 Pass only what the browser needs to client components, never the whole session.
 
-## Local https
+## Local testing
 
-Add the tunnel host to `next.config` so the dev server accepts it:
-
-```ts
-const nextConfig = { allowedDevOrigins: ["your-tunnel-host.trycloudflare.com"] };
-```
+Set `PUBLIC_BASE_URL=http://localhost:3000` (or leave it unset: `APP_URL` defaults to that).
+WinkKey returns to localhost directly; no tunnel or `allowedDevOrigins` entry is needed.

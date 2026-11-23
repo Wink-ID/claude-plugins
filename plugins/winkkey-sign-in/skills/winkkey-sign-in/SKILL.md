@@ -52,7 +52,7 @@ Make sure that file is in `.gitignore` before writing to it.
   code or commits. If they don't have one yet: get it on the WinkKey portal first.
 - `SESSION_SECRET`: generate it yourself (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
   and write it to the env file without showing it.
-- `PUBLIC_BASE_URL`: the https address people reach the app at (see step 4 for local).
+- `PUBLIC_BASE_URL`: the https address people reach the app at (`http://localhost:<port>` locally, see step 4).
 - `WINKKEY_BASE_URL`: leave unset unless told otherwise; defaults to `https://winkkey.net/v2`.
 
 ### 3. Build it
@@ -75,13 +75,13 @@ Keep the developer's existing styles: make the sign-in page look like the rest o
 
 ### 4. Run it and sign in once
 
-WinkKey only sends people back to **https** addresses. Locally that means an https tunnel
-to the dev server, for example `npx cloudflared tunnel --url http://localhost:3000`
-(no account needed) or ngrok. Ask before installing or running a tunnel tool. Put the
-tunnel's https address in `PUBLIC_BASE_URL` and restart the app; with Next.js also add the
-tunnel host to `allowedDevOrigins` in `next.config`.
+No tunnel is needed locally: WinkKey sends people back to `http://localhost` addresses.
+Set `PUBLIC_BASE_URL` to the dev server's address (for example `http://localhost:3000`),
+matching exactly what the developer opens in the browser, and restart the app. The
+session cookie must not be `Secure` over plain http (the code here sets `Secure` only when
+`PUBLIC_BASE_URL` is https).
 
-Start the app, open `/signin` through the https address, and ask the developer to click
+Start the app, open `/signin` at that address, and ask the developer to click
 "Sign in with Wink" and finish on their phone or laptop. Never do the WinkKey step for
 them. When they say it worked, confirm the protected page loads and sign-out works.
 If it fails, use the troubleshooting list below.

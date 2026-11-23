@@ -22,7 +22,7 @@ decides which; a Wink ID created in one environment doesn't exist in the other.
 
 | Field | Meaning |
 |---|---|
-| `callbackUrl` | Where WinkKey sends the person afterwards. Must be https. Sent with every request; nothing to register. |
+| `callbackUrl` | Where WinkKey sends the person afterwards. https in production; `http://localhost:<port>` works for local dev. Sent with every request; nothing to register. |
 | `ttlSeconds` | How long the link works. 600 for normal sign-in. |
 | `displayTitle`, `displaySubtext` | Shown to the person on winkkey.net. Use the app's name. |
 | `kind` (optional) | Leave out for sign-in. `"enroll"` first walks someone through creating a Wink ID (useful for invites, see `access-control.md`). |

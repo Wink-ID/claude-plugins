@@ -16,7 +16,7 @@ Create one on the WinkKey portal. It starts with `wkey_`.
 In your app's folder, in Claude Code:
 
 ```
-/plugin marketplace add wink-cloud/claude-plugins
+/plugin marketplace add wink-id/claude-plugins
 /plugin install winkkey-sign-in@wink
 ```
 
@@ -27,8 +27,8 @@ In your app's folder, in Claude Code:
 Claude asks for your key (paste it in the chat, or put `WINKKEY_API_KEY=wkey_…` in your
 `.env.local` / `.env` yourself), builds sign-in, and asks you to sign in once to check it.
 
-WinkKey only returns people to https addresses, so for local testing Claude will suggest
-an https tunnel (for example `npx cloudflared tunnel --url http://localhost:3000`).
+Local testing works straight on `http://localhost`: WinkKey sends people back to your
+local dev server, so no tunnel is needed. Use https once the app is live.
 
 ---
 
