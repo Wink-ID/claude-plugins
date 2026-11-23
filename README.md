@@ -16,7 +16,7 @@ Create one on the WinkKey portal. It starts with `wkey_`.
 In your app's folder, in Claude Code:
 
 ```
-/plugin marketplace add wink-id/claude-plugins
+/plugin marketplace add https://github.com/Wink-ID/claude-plugins
 /plugin install winkkey-sign-in@wink
 ```
 

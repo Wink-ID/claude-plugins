@@ -19,6 +19,9 @@ person confirms on winkkey.net
 WinkKey ─ redirect ─► GET /api/sign-in/complete ─ GET /api/merchant/auth-request/{rid} ─► WinkKey
                       ◄────── { status: "consumed", consumedBy: { winkTag, email } } ───┘
 browser ◄─ redirect to the page they wanted, session cookie set
+
+browser ─ POST /api/sign-out ─► app server ─ POST /api/merchant/signout ─► WinkKey  (optional)
+        ◄─ session cookie cleared, redirect to /signin ◄──────── 204 ────────────────┘
 ```
 
 ## Reference files
@@ -68,6 +71,10 @@ Follow the framework reference. The default build is:
   a `/signin` page with a "Sign in with Wink" button, and protection on every page that
   needs a signed-in person (a request filter sending others to `/signin?return_to=…`, plus
   a session check in each protected page or handler).
+- **Sign-out:** the default clears the local session AND calls `/api/merchant/signout` so
+  the next sign-in shows the face camera again. If the app is one of several the person
+  signs into with Wink (so signing out of one shouldn't sign them out everywhere), remove
+  the WinkKey call — the inline comment points at the three lines to delete.
 - **Identity:** use `winkTag` as the person's id (stable for that person); `email` is for
   display and allowlists.
 

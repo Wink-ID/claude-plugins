@@ -106,6 +106,21 @@ export async function readAuthRequest(rid: string) {
   return (await res.json()) as { status?: string; consumedBy?: { winkTag?: string | null; email?: string | null }; consumedMethod?: string | null };
 }
 
+/** End the person's Wink session, so the next sign-in shows the face camera again.
+ *  Idempotent and fire-and-forget: a failure here shouldn't block the sign-out itself. */
+export async function endWinkSession(winkTag: string): Promise<void> {
+  try {
+    await fetch(`${WINKKEY}/api/merchant/signout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey()}` },
+      body: JSON.stringify({ winkTag }),
+      cache: "no-store",
+    });
+  } catch (e) {
+    console.warn("[endWinkSession] couldn't reach WinkKey:", e instanceof Error ? e.message : e);
+  }
+}
+
 export const nonce = () => randomBytes(12).toString("base64url");
 ```
 
@@ -187,10 +202,17 @@ export async function GET(req: NextRequest) {
 
 ```ts
 import { NextResponse } from "next/server";
-import { APP_URL, SESSION_COOKIE, cookieOptions } from "@/lib/winkkey";
+import { APP_URL, SESSION_COOKIE, cookieOptions, endWinkSession } from "@/lib/winkkey";
+import { getSession } from "@/lib/session";
 
 /** POST only, so a link on another site can't sign anyone out. */
 export async function POST() {
+  // Also end the person's Wink session so the next sign-in shows the face camera again.
+  // Remove these two lines if your app is one of several the person signs into with Wink
+  // and signing out here shouldn't sign them out everywhere.
+  const s = await getSession();
+  if (s) await endWinkSession(s.winkTag);
+
   const res = NextResponse.redirect(`${APP_URL}/signin?signed_out=1`, 303);
   res.cookies.set(SESSION_COOKIE, "", cookieOptions(0));
   return res;

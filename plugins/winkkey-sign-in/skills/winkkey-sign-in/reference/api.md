@@ -55,6 +55,33 @@ WinkKey redirects the person to `callbackUrl`. Your handler then calls:
 | `consumedMethod` | How they confirmed (e.g. passkey, face). Fine to store. |
 | `winkAccessToken` | Only needed to call other Wink APIs as this person. Don't put it in the browser. |
 
+## 3. End the Wink session (optional, on sign-out)
+
+`POST /api/merchant/signout` with JSON:
+
+```json
+{ "winkTag": "…" }
+```
+
+| Field | Meaning |
+|---|---|
+| `winkTag` | The person's Wink id (from `consumedBy.winkTag` at sign-in). Preferred. |
+| `userId` | Alternative — the WinkKey `userId` if you stored that instead. One of the two is required. |
+
+Reply: `204 No Content`. Idempotent — a person with no live Wink session returns 204 too, so
+it's safe to call on every sign-out without a check first.
+
+**When to call:** on sign-out, if you want the next sign-in to show the face camera again.
+If you don't call it, the person's Wink session stays live in their browser (they came in
+via Wink's biometric face match; that session is stored on winkkey.net). The next time they
+click "Sign in with Wink", WinkKey silently resumes that session and sends them straight
+back without another face match.
+
+**When to skip:** if the person uses Wink for several apps and signing out of yours
+shouldn't sign them out everywhere, or if your app has no sign-out (e.g. a single-use
+confirmation link). Clearing your own session cookie is always enough to end the person's
+session in your app.
+
 ## Error codes to pass back to the sign-in page
 
 Redirect to `/signin?signin_error=<code>` and show a friendly line:

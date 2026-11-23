@@ -113,7 +113,22 @@ export function mountWinkSignIn(app) {
     }
   });
 
-  app.post("/api/sign-out", (req, res) => {
+  app.post("/api/sign-out", async (req, res) => {
+    // Also end the person's Wink session so the next sign-in shows the face camera again.
+    // Remove this block if your app is one of several the person signs into with Wink
+    // and signing out here shouldn't sign them out everywhere.
+    const s = getSession(req);
+    if (s) {
+      try {
+        await fetch(`${WINKKEY}/api/merchant/signout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey()}` },
+          body: JSON.stringify({ winkTag: s.winkTag }),
+        });
+      } catch (e) {
+        console.warn("[sign-out] couldn't reach WinkKey:", e.message);
+      }
+    }
     setCookie(res, SESSION_COOKIE, "", 0);
     res.redirect(303, `${APP_URL}/signin?signed_out=1`);
   });
