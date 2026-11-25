@@ -1,7 +1,7 @@
 ---
 name: winkkey-sign-in
 description: >-
-  Add "Sign in with Wink" (WinkKey biometric sign-in: selfie, Face ID, Touch ID or passkey) to a web app. Use when the user asks to add Wink or WinkKey sign-in or login, has a WinkKey API key (starts with wkey_) to set up, wants to protect pages behind Wink sign-in, or is debugging a WinkKey sign-in that fails, loops or signs in the wrong person.
+  Add "Sign in with Wink" (WinkKey biometric sign-in: selfie, Face ID, Touch ID or passkey) to a web app. Use when the user asks to add Wink or WinkKey sign-in or login, has a WinkKey API key (starts with wkey_) to set up, wants to protect pages behind Wink sign-in, wants single sign-on across several apps that use WinkKey, or is debugging a WinkKey sign-in that fails, loops or signs in the wrong person.
 ---
 
 # Sign in with Wink
@@ -75,6 +75,12 @@ Follow the framework reference. The default build is:
   the next sign-in shows the face camera again. If the app is one of several the person
   signs into with Wink (so signing out of one shouldn't sign them out everywhere), remove
   the WinkKey call — the inline comment points at the three lines to delete.
+- **Single sign-on (optional):** ask "Will the same people use more than one of your apps
+  with Wink?" If yes, they can turn on single sign-on for each app's key, with no code
+  change: `PATCH /api/merchant/settings` with `{ "ssoEnabled": true }` (see `api.md`
+  section 4), or the switch at winkkey.net/manage. Then someone signed in to one app goes
+  straight into the next. Add `prompt: "login"` to sign-in links that approve payments or
+  admin actions so those always ask for a fresh face scan. Default: leave it off.
 - **Identity:** use `winkTag` as the person's id (stable for that person); `email` is for
   display and allowlists.
 
@@ -117,5 +123,10 @@ If it fails, use the troubleshooting list below.
   iPhone:** those in-app browsers can break the WinkKey step. Ask people to open the app in
   Safari; for links you send by email or chat, detect in-app browsers and show
   "Open in Safari".
+- **Second app still asks for a face scan with single sign-on on:** check that key's setting
+  (`GET /api/merchant/settings`), that both keys are in the same Wink environment, that it's
+  the same browser (in-app browsers keep their own cookies), and that the first sign-in was
+  within 8 hours of use and 24 hours of its face scan. Links with `prompt: "login"`,
+  `sso: false` or a different `userHintEmail` always ask.
 - **Same person, different account:** you keyed users on email. Use `winkTag`; the email
   on someone's Wink account can differ from the one you know.

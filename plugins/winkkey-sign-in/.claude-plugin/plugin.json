@@ -1,6 +1,6 @@
 {
   "name": "winkkey-sign-in",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Add Sign in with Wink (WinkKey biometric sign-in) to a web app.",
   "author": { "name": "Wink" },
   "keywords": ["wink", "winkkey", "sign-in", "authentication", "biometric", "passkey"]
